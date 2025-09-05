@@ -13,6 +13,16 @@
                 <label for="phone" class="form-label">電話</label>
                 <input type="tel" class="form-control" id="phone" required>
             </div>
+            
+            <div class="mb-3">
+                <label for="line" class="form-label">Line ID</label>
+                <input type="text" class="form-control" id="line" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="content" class="form-label">聯繫方式</label>
+                <input type="text" class="form-control" id="content" required>
+            </div>
 
             <div class="mb-3">
                 <label for="date" class="form-label">預約日期</label>

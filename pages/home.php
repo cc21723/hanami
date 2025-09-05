@@ -1,3 +1,27 @@
+    <style>
+        .carousel-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.6s ease;
+        }
+
+        .carousel-img {
+            height: 250px;
+            width: 25%;
+            /* 一排4張 */
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+            padding: 5px;
+        }
+    </style>
+
     <!-- 封面圖 -->
     <div class="hero">
         <h1>🌸花見漫漫美學🌸</h1>
@@ -29,19 +53,25 @@
     </div>
 
     <!-- 作品集 -->
-    <!-- SnapWidget 替換 -->
-    <!-- IG 輪播開始 -->
+    <!-- 輪播開始 -->
     <div class="container gallery text-center my-5">
         <h2>🌸作品照片🌸</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <iframe src="https://snapwidget.com/embed/1079780" class="snapwidget-widget" allowtransparency="true"
-                    frameborder="0" scrolling="no"
-                    style="border:none; overflow:hidden; width:100%; height:300px;"></iframe>
+        <div class="carousel-wrapper">
+            <div class="carousel-track" id="track">
+                <?php
+                include "./api/db.php";
+                $sql = "SELECT * FROM product WHERE sh=1 ORDER BY created_at DESC";
+                $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($rows as $row): ?>
+                    <img src="./images/<?= htmlspecialchars($row['img']) ?>"
+                        alt="<?= htmlspecialchars($row['alt']) ?>"
+                        class="carousel-img">
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
-    <!-- IG 輪播結束 -->
+    <!-- 輪播結束 -->
 
 
 
@@ -52,3 +82,32 @@
         <iframe class="mt-3" width="100%" height="250" frameborder="0" style="border:0"
             src="https://www.google.com/maps?q=新北市蘆洲區民族路290巷13號1樓&output=embed" allowfullscreen></iframe>
     </div>
+
+    <script>
+        const track = document.getElementById("track");
+        const slides = document.querySelectorAll(".carousel-img");
+        const total = slides.length;
+        let index = 0;
+
+        //  複製前 4 張到尾端，確保輪播時永遠有東西補上
+        for (let i = 0; i < 4; i++) {
+            if (slides[i]) {
+                track.appendChild(slides[i].cloneNode(true));
+            }
+        }
+
+        setInterval(() => {
+            index++;
+            track.style.transition = "transform 0.6s ease";
+            track.style.transform = `translateX(-${index * 25}%)`;
+
+            // 當滑到最後補的第 4 張，瞬間跳回真正的第一張
+            if (index >= total) {
+                setTimeout(() => {
+                    track.style.transition = "none";
+                    track.style.transform = "translateX(0)";
+                    index = 0;
+                }, 600);
+            }
+        }, 3000);
+    </script>
