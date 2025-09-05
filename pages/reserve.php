@@ -13,7 +13,7 @@
                 <label for="phone" class="form-label">電話</label>
                 <input type="tel" class="form-control" id="phone" required>
             </div>
-            
+
             <div class="mb-3">
                 <label for="line" class="form-label">Line ID</label>
                 <input type="text" class="form-control" id="line" required>
@@ -42,20 +42,20 @@
 
             <div class="mb-3">
                 <label class="form-label">有無延甲</label>
-                <select class="form-select" required>
-                    <option value="">請選擇</option>
-                    <option>無</option>
-                    <option>有</option>
+                <select class="form-select" name="extend" required>
+                    <option value="" disabled>請選擇</option>
+                    <option value="0">無</option>
+                    <option value="1">有</option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">是否需卸甲</label>
                 <select class="form-select" required>
-                    <option value="">請選擇</option>
-                    <option>不需要</option>
-                    <option>需要（本店）</option>
-                    <option>需要（他店）</option>
+                    <option value="" disabled>請選擇</option>
+                    <option value="0">不需要</option>
+                    <option value="1">需要（本店）</option>
+                    <option value="2">需要（他店）</option>
                 </select>
             </div>
 
@@ -92,8 +92,6 @@
             </div>
 
         <?php endif; ?>
-        <!-- <img src="https://i.pinimg.com/736x/e8/34/73/e834738634c757b09ec48013e304a52e.jpg" alt="預約時段說明"
-            class="img-fluid rounded shadow-sm"> -->
     </div>
 </div>
 
@@ -101,6 +99,24 @@
     $(function() {
         $('#bookingForm').on('submit', function(e) {
             e.preventDefault(); // 阻止表單真正送出
+
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: './api/booking_add.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res === 'success') {
+                        alert('預約已送出，等待確認');
+                        $('#bookingForm')[0].reset();
+                    } else {
+                        alert('送出失敗，請稍後再試');
+                    }
+                }
+            });
 
             // 模擬成功（你也可以在這裡加入 Ajax 傳送）
             $('#successModal').modal('show');

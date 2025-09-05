@@ -63,6 +63,48 @@ $userName = $user['userName'] ?? '錯誤';
 
     <h4>🕒 最新預約紀錄</h4>
     <!-- 加在 <body> 中的某個位置 -->
+
+    <?php
+    $reserves = $Reserve->all(['status' => '待確認']);
+    foreach ($reserves as $r):
+    ?>
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <h5><?= htmlspecialchars($r['name']) ?> 的預約申請</h5>
+                <p>📞 電話：<?= $r['phone'] ?>｜📅 日期：<?= $r['date'] ?> <?= $r['time'] ?></p>
+                <p>📱 Line ID：<?= $r['line'] ?>｜聯繫方式：<?= $r['contact'] ?></p>
+                <p>🔁 延甲：<?= $r['extend'] == 1 ? '有' : '無' ?>｜卸甲：
+                    <?php
+                    switch ($r['remove']) {
+                        case 0:
+                            echo '不需要';
+                            break;
+                        case 1:
+                            echo '需要（本店）';
+                            break;
+                        case 2:
+                            echo '需要（他店）';
+                            break;
+                        default:
+                            echo '未填寫';
+                    }
+                    ?>
+                </p>
+                <p>💬 備註：<?= nl2br($r['notes']) ?></p>
+                <p>🖼️ 圖片：
+                    <?php foreach (json_decode($r['style_img']) ?? [] as $img): ?>
+                        <img src="./images/<?= $img ?>" width="80" class="me-2 mb-2">
+                    <?php endforeach; ?>
+                </p>
+                <form method="post" action="./api/reserve_update.php" class="d-flex gap-2">
+                    <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                    <button name="status" value="已接受" class="btn btn-success btn-sm">接受</button>
+                    <button name="status" value="已拒絕" class="btn btn-outline-danger btn-sm">拒絕</button>
+                </form>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
     <div class="container my-5">
         <h4 class="mb-4">📝 今日代辦事項</h4>
 
@@ -81,7 +123,7 @@ $userName = $user['userName'] ?? '錯誤';
             </div>
         </div>
     </div>
-    
+
     <script>
         function loadTodos() {
             $.get('./api/todoget.php', function(data) {
